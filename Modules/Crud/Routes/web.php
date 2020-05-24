@@ -11,6 +11,9 @@
 |
 */
 
-Route::prefix('crud')->group(function() {
-    Route::get('/', 'CrudController@index');
-});
+Route::resource('crud', 'CrudController');
+
+
+// Route::prefix('crud')->group(function () {
+//     Route::get('/', 'CrudController@index');
+// });
