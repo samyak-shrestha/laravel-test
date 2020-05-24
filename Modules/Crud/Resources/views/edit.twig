@@ -1,27 +1,28 @@
-@extends('crud::layouts.master')
+{% extends "crud::layouts.master" %}
 
-@section('content')
+{% block content %}
 
-@if ($errors->any())
+{% if erros.any|length > 0 %}
 <div class="alert alert-danger">
     <ul>
-        @foreach ($errors->all() as $error)
-        <li>{{ $error }}</li>
-        @endforeach
+    {% for error in erros.all %}
+        <li>{{ error }}</li>
+        {% endfor %}
     </ul>
 </div>
-@endif
+{% endif %}
+
 <div align="right">
     <a href="{{ route('crud.index') }}" class="btn btn-default">Back</a>
 </div>
 <br />
-<form method="post" action="{{ route('crud.update', $data->id) }}" enctype="multipart/form-data">
-    @csrf
-    @method('PATCH')
+<form method="post" action="{{ route('crud.update', data.id) }}" enctype="multipart/form-data">
+    {{ csrf_field() }}
+    {{ method_field('PATCH') }}
     <div class="form-group">
         <label class="col-md-4 text-right">Enter First Name</label>
         <div class="col-md-8">
-            <input type="text" name="first_name" value="{{ $data->first_name }}" class="form-control input-lg" />
+            <input type="text" name="first_name" value="{{ data.first_name }}" class="form-control input-lg" />
         </div>
     </div>
     <br />
@@ -30,7 +31,7 @@
     <div class="form-group">
         <label class="col-md-4 text-right">Enter Last Name</label>
         <div class="col-md-8">
-            <input type="text" name="last_name" value="{{ $data->last_name }}" class="form-control input-lg" />
+            <input type="text" name="last_name" value="{{ data.last_name }}" class="form-control input-lg" />
         </div>
     </div>
     <br />
@@ -40,4 +41,4 @@
     </div>
 </form>
 
-@endsection
+{% endblock %}

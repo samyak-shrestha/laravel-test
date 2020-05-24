@@ -18,7 +18,6 @@ class CrudController extends Controller
         $data = Crud::latest()->paginate(5);
         return view('crud::index', compact('data'))
             ->with('i', (request()->input('page', 1) - 1) * 5);
-        // return view('crud::index');
     }
 
     /**
@@ -61,7 +60,6 @@ class CrudController extends Controller
     {
         $data = Crud::findOrFail($id);
         return view('crud::show', compact('data'));
-        // return view('crud::show');
     }
 
     /**
