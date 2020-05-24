@@ -2,9 +2,59 @@
 
 namespace Modules\Crud\Entities;
 
-use Illuminate\Database\Eloquent\Model;
+use Doctrine\ORM\Mapping as ORM;
 
-class Crud extends Model
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="cruds")
+ */
+class Crud
 {
-    protected $fillable = ['first_name', 'last_name'];
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private $id;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $firstName;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $lastName;
+
+    public function __construct($firstName, $lastName)
+    {
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getFirstName()
+    {
+        return $this->firstName;
+    }
+
+    public function getLastName()
+    {
+        return $this->lastName;
+    }
+
+    public function setFirstName($firstName)
+    {
+        $this->firstName = $firstName;
+    }
+
+    public function setLastName($lastName)
+    {
+        $this->lastName = $lastName;
+    }
 }
