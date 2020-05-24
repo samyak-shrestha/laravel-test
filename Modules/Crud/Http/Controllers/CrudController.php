@@ -60,7 +60,19 @@ class CrudController extends Controller
         $em->persist($crud);
         $em->flush();
 
-        return redirect('crud')->with('success', 'Data Added successfully.');
+        // return response('Hello World', 200)
+        //     ->json([
+        //         'message' => 'created successfully',
+        //         'status' => 200
+        //     ])
+        //     ->header('Content-Type', 'text/plain');
+
+        return response()->json([
+            'message' => 'created successfully',
+            'status' => 200
+        ]);
+
+        // return redirect('crud')->with('success', 'Data Added successfully.');
     }
 
     /**
