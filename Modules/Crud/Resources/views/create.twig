@@ -9,66 +9,94 @@
 </div>
 <h1 id="title"> </h1>
 
-<form id="form-submit" @submit.prevent="handleSubmit">
+<div id="form-submit-dom"> 
 
-    {# {{ csrf_field() }} #}
-    {# <input type="hidden" name="_token" v-model="_token" value="{{ csrf_token() }}"> #}
-    <div class="form-group">
-        <label class="col-md-4 text-right">Enter First Name</label>
-        <div class="col-md-8">
-            <input type="text" name="first_name" v-model="first_name" class="form-control input-lg" />
+<h3 v-html="message"> </h3>
+<div v-if="errorCount.length != 0 ">
+    <div> errors </div>
+    <div v-for="errorCount in errorCountComp">
+        <h3>{{errorCount.name}}</h3>
+    </div>
+</div>
+
+    <form id="crud-submit-form" data-parsley-validate @submit.prevent="handleSubmit">
+     {# <form id="crud-submit-form" data-parsley-validate> #}
+    <input type="hidden" name="_token" id="token" value="{{ csrf_token() }}">
+        {# {{ csrf_field() }} #}
+        <div class="form-group">
+            <label class="col-md-4 text-right">Enter First Name</label>
+            <div class="col-md-8">
+                {# <input type="text" name="first_name"  required data-parsley-trigger="keyup" v-model="first_name" class="form-control input-lg" /> #}
+                <input type="text" name="first_name"  v-model="first_name" class="form-control input-lg" />
+            
+            </div>
         </div>
-    </div>
-    <br />
-    <br />
-    <div class="form-group">
-        <label class="col-md-4 text-right">Enter Last Name</label>
-        <div class="col-md-8">
-            <input type="text" name="last_name"  v-model="last_name" class="form-control input-lg" />
+        <br />
+        <br />
+        <div class="form-group">
+            <label class="col-md-4 text-right">Enter Last Name</label>
+            <div class="col-md-8">
+                <input type="text" name="last_name"  v-model="last_name" class="form-control input-lg" />
+            </div>
         </div>
-    </div>
 
-    <br /><br /><br />
-    <div class="form-group text-center">
-        <button type="submit" class="btn btn-primary input-lg">Submit</button>
-        {# <input type="submit" name="add" class="btn btn-primary input-lg" value="Add" /> #}
-    </div>
+        <br /><br /><br />
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-primary input-lg" v-bind:disabled="isButtonDisabled">Submit</button>
+            {# <input type="submit" name="add" class="btn btn-primary input-lg" value="Add" /> #}
+        </div>
 
-</form>
+    </form>
+</div>
 
 {% endblock %}
 
 
 {% block scripts %}
+
+
 {# action="{{ route('crud.store') }}" enctype="multipart/form-data" #}
 <script type="text/javascript">
+{% include 'crud::initial' %}
 
 document.getElementById("title").innerHTML = "Hello JavaScript!";
 
-const app = new Vue({
-  el: '#form-submit',
-  data: {
-    first_name: '',
-    last_name: ''
-  },
-  methods: {
-    handleSubmit: function() {
-      alert('Processing');
-
-      axios.post('{{ route('crud.store') }}', {
-        first_name: this.first_name,
-        last_name: this.last_name
-    })
-    .then(function (response) {
-        console.log(response);
-    })
-    .catch(function (error) {
-        console.log(error);
+{# $('#crud-submit-form').parsley(); #}
+{# errorComputedFunc #}
+    const app = new Vue({
+        el: '#form-submit-dom',
+        data: initial,
+       computed: {
+            errorCountComp: function() {
+               return _.pickBy(this.errorCount, function(u) {
+                    return u;
+                })
+            } // contains only Alex and James
+        },
+        methods: {
+            handleSubmit: function() {
+                app.isButtonDisabled = true;
+                const formData = jQuery('#crud-submit-form').serialize();
+                
+                axios.post('{{ route('crud.store') }}', formData)
+                .then(function (response) {
+                    if(response.status === 200){
+                        app.message = response.data.message;
+                        app.isButtonDisabled = false;
+                    } else {
+                        app.message = 'something went wrong';
+                    }
+                })
+                .catch(function (error) {
+                    if(error.response.status != 200){
+                        app.message = error.response.data.message;
+                        app.errors = error.response.data.errors;
+                        app.isButtonDisabled = false;
+                    }
+                });
+            },  //end of handleSubmit
+        } //end of method
     });
-
-    }
-  }
-});
 
 </script>
 

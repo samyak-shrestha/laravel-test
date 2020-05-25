@@ -10,6 +10,7 @@ use Modules\Crud\Entities\Crud;
 use Modules\Crud\Repository\CrudRepository as repo;
 use Doctrine\ORM\EntityManagerInterface;
 use Illuminate\Support\Facades\Session;
+use Modules\Crud\Http\Requests\CrudRequest;
 
 // use App\Validation\PostValidator;
 
@@ -45,27 +46,17 @@ class CrudController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function store(Request $request, EntityManagerInterface $em)
+    public function store(CrudRequest $request, EntityManagerInterface $em)
     {
-        $request->validate([
-            'first_name'    =>  'required',
-            'last_name'     =>  'required',
-        ]);
+        $data = $request->validated();
 
         $crud = new Crud(
-            $request->get('first_name'),
-            $request->get('last_name')
+            $data['first_name'],
+            $data['last_name']
         );
 
         $em->persist($crud);
         $em->flush();
-
-        // return response('Hello World', 200)
-        //     ->json([
-        //         'message' => 'created successfully',
-        //         'status' => 200
-        //     ])
-        //     ->header('Content-Type', 'text/plain');
 
         return response()->json([
             'message' => 'created successfully',
