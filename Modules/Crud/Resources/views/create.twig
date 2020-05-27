@@ -11,39 +11,42 @@
 
 <div id="form-submit-dom"> 
 
-<h3 v-html="message"> </h3>
-<div v-if="errorCount.length != 0 ">
-    <div> errors </div>
-    <div v-for="errorCount in errorCountComp">
-        <h3>{{errorCount.name}}</h3>
-    </div>
-</div>
+    {# <div class="alert alert-success" v-if="message"> #}
+            <h3 v-html="message"> </h3>
+    {# </div> #}
+    
 
     <form id="crud-submit-form" data-parsley-validate @submit.prevent="handleSubmit">
-     {# <form id="crud-submit-form" data-parsley-validate> #}
-    <input type="hidden" name="_token" id="token" value="{{ csrf_token() }}">
-        {# {{ csrf_field() }} #}
-        <div class="form-group">
-            <label class="col-md-4 text-right">Enter First Name</label>
+    {# <input type="hidden" name="_token" id="token" value="{{ csrf_token() }}"> #}
+
+        <div class="form-group" v-bind:class="{ 'has-error' : errors.first_name }">
+            <label class="col-md-4 text-right" >First Name</label>
             <div class="col-md-8">
-                {# <input type="text" name="first_name"  required data-parsley-trigger="keyup" v-model="first_name" class="form-control input-lg" /> #}
-                <input type="text" name="first_name"  v-model="first_name" class="form-control input-lg" />
-            
-            </div>
-        </div>
-        <br />
-        <br />
-        <div class="form-group">
-            <label class="col-md-4 text-right">Enter Last Name</label>
-            <div class="col-md-8">
-                <input type="text" name="last_name"  v-model="last_name" class="form-control input-lg" />
+                <input type="text" name="first_name"  required data-parsley-trigger="onfocusout" v-model="post.first_name" class="form-control input-lg" autocomplete="off" /> 
+                <span v-if="errors.first_name" :errors="errors" v-html="errors.first_name[0]">
+                {# v-if="errors.first_name && !post.first_name" #}
+                </span>
             </div>
         </div>
 
-        <br /><br /><br />
+        <br />
+        <br />
+
+        <div class="form-group"  v-bind:class="{ 'has-error' : errors.last_name }">
+            <label class="col-md-4 text-right">Last Name</label>
+            <div class="col-md-8">
+                <input type="text" name="last_name"  required data-parsley-trigger="onfocusout" v-model="post.last_name" class="form-control input-lg" autocomplete="off"/> 
+                <span v-if="errors.last_name" v-html="errors.last_name[0]">
+                </span>
+                {# <form-error v-if="errors.last_name" v-html="errors.last_name[0]">
+                </form-error> #}
+            </div>
+        </div>
+
+        <br /><br />
+
         <div class="form-group text-center">
-            <button type="submit" class="btn btn-primary input-lg" v-bind:disabled="isButtonDisabled">Submit</button>
-            {# <input type="submit" name="add" class="btn btn-primary input-lg" value="Add" /> #}
+            <button type="submit" class="btn btn-primary input-lg" v-bind:disabled="submitted">Submit</button>
         </div>
 
     </form>
@@ -66,23 +69,24 @@ document.getElementById("title").innerHTML = "Hello JavaScript!";
     const app = new Vue({
         el: '#form-submit-dom',
         data: initial,
-       computed: {
-            errorCountComp: function() {
-               return _.pickBy(this.errorCount, function(u) {
-                    return u;
-                })
-            } // contains only Alex and James
-        },
         methods: {
             handleSubmit: function() {
-                app.isButtonDisabled = true;
+
+                loadProgressBar()
+                const url = 'https://media.giphy.com/media/C6JQPEUsZUyVq/giphy.gif';
+
+                this.submitted = true;
+                this.isLoading = true;
+
                 const formData = jQuery('#crud-submit-form').serialize();
                 
                 axios.post('{{ route('crud.store') }}', formData)
                 .then(function (response) {
                     if(response.status === 200){
-                        app.message = response.data.message;
-                        app.isButtonDisabled = false;
+                        app.errors = response.data.errors;
+                        app.submitted = true;
+                        app.isLoading = true;
+                        window.location = response.data.redirect;
                     } else {
                         app.message = 'something went wrong';
                     }
@@ -91,7 +95,8 @@ document.getElementById("title").innerHTML = "Hello JavaScript!";
                     if(error.response.status != 200){
                         app.message = error.response.data.message;
                         app.errors = error.response.data.errors;
-                        app.isButtonDisabled = false;
+                        app.submitted = false;
+                        app.isLoading = false;
                     }
                 });
             },  //end of handleSubmit

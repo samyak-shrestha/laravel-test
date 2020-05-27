@@ -54,16 +54,17 @@ class CrudController extends Controller
             $data['first_name'],
             $data['last_name']
         );
-
         $em->persist($crud);
         $em->flush();
 
-        return response()->json([
-            'message' => 'created successfully',
-            'status' => 200
-        ]);
+        Session::flash('success', 'Data is successfully Updated');
 
-        // return redirect('crud')->with('success', 'Data Added successfully.');
+        return response()->json([
+            'errors'    => [],
+            'redirect' => route('crud.index'),
+            'message' => 'Data Saved Successfully',
+            'status' => 200
+        ], 200);
     }
 
     /**

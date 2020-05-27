@@ -1,12 +1,14 @@
 {# var kyc = {!! collect(auth()->user()->kyc->fields ?? \App\GuestUser::where('email',request()->get('email',auth()->user()->email))->firstOrNew([])->displayable()) !!}; #}
 
 var initial = {
-    first_name: '',
-    last_name: '',
-    errors : {},
-    errorCount : {"first_name":["first_name is required!"],"last_name":["please insert last name"]},
-    isButtonDisabled : false,
-    message : 'checking eror message loop'
+    post: {
+        first_name: '',
+        last_name: '',
+    },
+    errors : [],
+    submitted : false,
+    message : '',
+    isLoading: false
 };
 
 initial = Object.assign({},initial);
