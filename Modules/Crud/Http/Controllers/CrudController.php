@@ -9,6 +9,7 @@ use Modules\Crud\Entities\Crud;
 
 use Modules\Crud\Repository\CrudRepository as repo;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Illuminate\Support\Facades\Session;
 use Modules\Crud\Http\Requests\CrudRequest;
 
@@ -28,6 +29,7 @@ class CrudController extends Controller
     public function index(EntityManagerInterface $em)
     {
         $datas = $em->getRepository(Crud::class)->findAll();
+
         return View('crud::index')->with(['data' => $datas]);
         //implement pagination
     }

@@ -46,7 +46,7 @@
         <br /><br />
 
         <div class="form-group text-center">
-            <button type="submit" class="btn btn-primary input-lg" v-bind:disabled="submitted">Submit</button>
+            <button type="submit" class="btn btn-primary input-lg" v-bind:disabled="isLoading">Submit</button>
         </div>
 
     </form>
@@ -75,7 +75,6 @@ document.getElementById("title").innerHTML = "Hello JavaScript!";
                 loadProgressBar()
                 const url = 'https://media.giphy.com/media/C6JQPEUsZUyVq/giphy.gif';
 
-                this.submitted = true;
                 this.isLoading = true;
 
                 const formData = jQuery('#crud-submit-form').serialize();
@@ -84,7 +83,6 @@ document.getElementById("title").innerHTML = "Hello JavaScript!";
                 .then(function (response) {
                     if(response.status === 200){
                         app.errors = response.data.errors;
-                        app.submitted = true;
                         app.isLoading = true;
                         window.location = response.data.redirect;
                     } else {
@@ -93,9 +91,9 @@ document.getElementById("title").innerHTML = "Hello JavaScript!";
                 })
                 .catch(function (error) {
                     if(error.response.status != 200){
+                        app.message = error.response.message;
                         app.message = error.response.data.message;
                         app.errors = error.response.data.errors;
-                        app.submitted = false;
                         app.isLoading = false;
                     }
                 });
