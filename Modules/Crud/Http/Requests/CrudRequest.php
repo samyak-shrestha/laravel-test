@@ -15,8 +15,8 @@ class CrudRequest extends FormRequest
     public function rules()
     {
         return [
-            'first_name'    =>  'required',
-            'last_name'     =>  'required',
+            'firstName'    =>  'required',
+            'lastName'     =>  'required',
         ];
     }
 
@@ -33,9 +33,9 @@ class CrudRequest extends FormRequest
     public function messages()
     {
         return [
-            // 'first_name.required' => '<style style="color:red"> first name is required</style> ',
-            'first_name.required' => 'first name is required',
-            'last_name.required' => 'last name is required',
+            // 'firstName.required' => '<style style="color:red"> first name is required</style> ',
+            'firstName.required' => 'first name is required',
+            'lastName.required' => 'last name is required',
         ];
     }
 }

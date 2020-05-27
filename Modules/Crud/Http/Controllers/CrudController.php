@@ -8,8 +8,6 @@ use Illuminate\Routing\Controller;
 use Modules\Crud\Entities\Crud;
 
 use Modules\Crud\Repository\CrudRepository as repo;
-use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Illuminate\Support\Facades\Session;
 use Modules\Crud\Http\Requests\CrudRequest;
 
@@ -17,20 +15,17 @@ use Modules\Crud\Http\Requests\CrudRequest;
 
 class CrudController extends Controller
 {
-    public function __construct(repo $repo)
-    {
-        $this->repo = $repo;
-    }
-
     /**
      * Display a listing of the resource.
      * @return Response
      */
-    public function index(EntityManagerInterface $em)
+    public function index()
     {
-        $datas = $em->getRepository(Crud::class)->findAll();
 
-        return View('crud::index')->with(['data' => $datas]);
+        $data = Crud::latest()->paginate(5);
+        return view('crud::index', compact('data'))
+            ->with('i', (request()->input('page', 1) - 1) * 5);
+
         //implement pagination
     }
 
@@ -48,18 +43,11 @@ class CrudController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function store(CrudRequest $request, EntityManagerInterface $em)
+    public function store(CrudRequest $request)
     {
-        $data = $request->validated();
-
-        $crud = new Crud(
-            $data['first_name'],
-            $data['last_name']
-        );
-        $em->persist($crud);
-        $em->flush();
-
-        Session::flash('success', 'Data is successfully Updated');
+        $datas = $request->validated();
+        Crud::create($datas);
+        Session::flash('success', 'Data is successfully Stored');
 
         return response()->json([
             'errors'    => [],
@@ -74,9 +62,9 @@ class CrudController extends Controller
      * @param int $id
      * @return Response
      */
-    public function show(EntityManagerInterface $em, $id)
+    public function show($id)
     {
-        $data = $em->getRepository(Crud::class)->find($id);
+        $data = Crud::findOrFail($id);
         return view('crud::show', compact('data'));
     }
 
@@ -87,8 +75,8 @@ class CrudController extends Controller
      */
     public function edit($id = NULL)
     {
-        $data = $this->repo->postOfId($id);
-        return View('crud::edit')->with(['data' => $data]);
+        $data = Crud::findOrFail($id);
+        return view('crud::edit', compact('data'));
     }
 
     /**
@@ -97,23 +85,13 @@ class CrudController extends Controller
      * @param int $id
      * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(CrudRequest $request, $id)
     {
-        $request->validate([
-            'first_name'    =>  'required',
-            'last_name'     =>  'required'
-        ]);
+        $datas = $request->validated();
 
-        $all =  $request->except(['_token', '_method', 'edit']);
+        Crud::whereId($id)->update($datas);
 
-        $Id = $this->repo->postOfId($id);
-        if (!is_null($Id)) {
-            $this->repo->update($Id, $all);
-            return redirect('crud')->with('success', 'Data is successfully updated');
-        } else {
-            $this->repo->create($this->repo->perpare_data($all));
-            return redirect('crud')->with('error', 'errr occured');
-        }
+        return redirect('crud')->with('success', 'Data is successfully updated');
     }
 
     /**
@@ -123,12 +101,9 @@ class CrudController extends Controller
      */
     public function destroy($id)
     {
-        $data = $this->repo->postOfId($id);
-        if (!is_null($data)) {
-            $this->repo->delete($data);
-            return redirect('crud')->with('success', 'Data deleted successfully');
-        } else {
-            return redirect('crud')->with('error', 'Data deleted successfully');
-        }
+        $data = Crud::findOrFail($id);
+        $data->delete();
+
+        return redirect('crud')->with('success', 'Data is successfully deleted');
     }
 }

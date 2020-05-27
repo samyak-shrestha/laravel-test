@@ -16,6 +16,7 @@
         <th width="35%">Last Name</th>
         <th width="30%">Action</th>
     </tr>
+
     {% for row in data %}
     <tr>
         <td>{{ row.firstName }}</td>
@@ -33,6 +34,6 @@
     {% endfor %}
 </table>
 
-{# {{ data.links }} #}
+{{ data.links }}
 
 {% endblock %}

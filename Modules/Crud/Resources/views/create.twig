@@ -19,12 +19,12 @@
     <form id="crud-submit-form" data-parsley-validate @submit.prevent="handleSubmit">
     {# <input type="hidden" name="_token" id="token" value="{{ csrf_token() }}"> #}
 
-        <div class="form-group" v-bind:class="{ 'has-error' : errors.first_name }">
+        <div class="form-group" v-bind:class="{ 'has-error' : errors.firstName }">
             <label class="col-md-4 text-right" >First Name</label>
             <div class="col-md-8">
-                <input type="text" name="first_name"  required data-parsley-trigger="onfocusout" v-model="post.first_name" class="form-control input-lg" autocomplete="off" /> 
-                <span v-if="errors.first_name" :errors="errors" v-html="errors.first_name[0]">
-                {# v-if="errors.first_name && !post.first_name" #}
+                <input type="text" name="firstName"  required data-parsley-trigger="onfocusout" v-model="post.firstName" class="form-control input-lg" autocomplete="off" /> 
+                <span v-if="errors.firstName" :errors="errors" v-html="errors.firstName[0]">
+                {# v-if="errors.firstName && !post.firstName" #}
                 </span>
             </div>
         </div>
@@ -32,13 +32,13 @@
         <br />
         <br />
 
-        <div class="form-group"  v-bind:class="{ 'has-error' : errors.last_name }">
+        <div class="form-group"  v-bind:class="{ 'has-error' : errors.lastName }">
             <label class="col-md-4 text-right">Last Name</label>
             <div class="col-md-8">
-                <input type="text" name="last_name"  required data-parsley-trigger="onfocusout" v-model="post.last_name" class="form-control input-lg" autocomplete="off"/> 
-                <span v-if="errors.last_name" v-html="errors.last_name[0]">
+                <input type="text" name="lastName"  required data-parsley-trigger="onfocusout" v-model="post.lastName" class="form-control input-lg" autocomplete="off"/> 
+                <span v-if="errors.lastName" v-html="errors.lastName[0]">
                 </span>
-                {# <form-error v-if="errors.last_name" v-html="errors.last_name[0]">
+                {# <form-error v-if="errors.lastName" v-html="errors.lastName[0]">
                 </form-error> #}
             </div>
         </div>
