@@ -16,16 +16,29 @@
     {# </div> #}
     
 
-    <form id="crud-submit-form" data-parsley-validate @submit.prevent="handleSubmit">
+    <form id="crud-submit-form" data-parsley-validate @submit.prevent="handleSubmit" enctype="multipart/form-data">
     {# <input type="hidden" name="_token" id="token" value="{{ csrf_token() }}"> #}
 
         <div class="form-group" v-bind:class="{ 'has-error' : errors.firstName }">
             <label class="col-md-4 text-right" >First Name</label>
             <div class="col-md-8">
-                <input type="text" name="firstName"  required data-parsley-trigger="onfocusout" v-model="post.firstName" class="form-control input-lg" autocomplete="off" /> 
+                <input type="text" name="firstName"  required data-parsley-trigger="onChange" v-model="post.firstName" class="form-control input-lg" autocomplete="off" /> 
                 <span v-if="errors.firstName" :errors="errors" v-html="errors.firstName[0]">
                 {# v-if="errors.firstName && !post.firstName" #}
                 </span>
+            </div>
+        </div>
+<br />
+        <br />
+  <div class="form-group"  v-bind:class="{ 'has-error' : errors.image }">
+            <label class="col-md-4 text-right">image</label>
+            <div class="col-md-8">
+                <input type="file" name="image"  required v-model="post.image" v-on:change="uploadImage" /> 
+                
+                <span v-if="errors.image" v-html="errors.image[0]">
+                </span>
+                {# <form-error v-if="errors.image" v-html="errors.image[0]">
+                </form-error> #}
             </div>
         </div>
 
@@ -70,21 +83,32 @@ document.getElementById("title").innerHTML = "Hello JavaScript!";
         el: '#form-submit-dom',
         data: initial,
         methods: {
-            handleSubmit: function() {
+            uploadImage: function(){
+                 const formData = jQuery('#crud-submit-form').serialize();
+                
+                console.log('formdata',formData);
+                console.log('upload image called');
+            },
+            handleSubmit: function(event) {
 
-                loadProgressBar()
-                const url = 'https://media.giphy.com/media/C6JQPEUsZUyVq/giphy.gif';
+                {# loadProgressBar()
+                const url = 'https://media.giphy.com/media/C6JQPEUsZUyVq/giphy.gif'; #}
 
                 this.isLoading = true;
 
                 const formData = jQuery('#crud-submit-form').serialize();
                 
+                console.log('formdata',formData);
+                 console.log('event',event);
+                console.log('event.target',event.target.files[0]);
+                 {# this.post.image = event.target.files[0]; #}
+
                 axios.post('{{ route('crud.store') }}', formData)
                 .then(function (response) {
                     if(response.status === 200){
                         app.errors = response.data.errors;
                         app.isLoading = true;
-                        window.location = response.data.redirect;
+                        {# window.location = response.data.redirect; #}
                     } else {
                         app.message = 'something went wrong';
                     }

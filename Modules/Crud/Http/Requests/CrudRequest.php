@@ -17,6 +17,8 @@ class CrudRequest extends FormRequest
         return [
             'firstName'    =>  'required',
             'lastName'     =>  'required',
+            'image' => 'required|file|image|size:1024|dimensions:max_width=500,max_height=500',
+            // 'image' => 'required|file|image|size:1024|dimensions:max_width=500,max_height=500',
         ];
     }
 
@@ -27,7 +29,7 @@ class CrudRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return false;
     }
 
     public function messages()

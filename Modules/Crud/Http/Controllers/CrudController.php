@@ -45,6 +45,8 @@ class CrudController extends Controller
      */
     public function store(CrudRequest $request)
     {
+
+        dd($request);
         $datas = $request->validated();
         Crud::create($datas);
         Session::flash('success', 'Data is successfully Stored');
